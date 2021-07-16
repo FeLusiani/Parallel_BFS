@@ -43,12 +43,13 @@ int main(int argc, char *argv[])
 		utimer t("BFS_seq");
 		occ = BFS_seq(to_find, graph.nodes_array);
 	}
-	// cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+
 
 	occ = 0;
 	{
 		utimer t("BFS_par");
 		occ = BFS_par(to_find, graph.nodes_array, nw);
 	}
-	// cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 }

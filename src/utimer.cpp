@@ -17,3 +17,13 @@ utimer::~utimer()
   if (us_elapsed != NULL)
     (*us_elapsed) = musec;
 }
+
+my_timer::my_timer(){
+  start = std::chrono::system_clock::now();
+}
+
+long int my_timer::get_time(){
+  auto stop = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed = stop - start;
+  return std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+}
