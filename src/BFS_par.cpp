@@ -39,11 +39,10 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         if (start == end) return;
         int my_counter = 0;
         {
-        utimer t("frontier");
+        // utimer t("frontier");
         for (int f_pos = start; f_pos < end; f_pos++)
         {
             int n_id = frontier[f_pos];
-            // this_thread::sleep_for (std::chrono::milliseconds(1));
             if (explored_nodes[n_id])
                 continue;
             explored_nodes[n_id] = true;
@@ -57,8 +56,6 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         }
         // join results to global results
         counter += my_counter;
-        // cout << "performance: " << double(distance(start,end)) / t.get_time() << endl;
-        
     };
 
     long int seq_time = 0;
@@ -75,8 +72,9 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         for (auto& t : workers) t.join();
         par_time += t.get_time();
 
+
         frontier.clear();
-        
+
         {
         // utimer t("merging");
         my_timer t;

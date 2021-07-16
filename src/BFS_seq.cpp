@@ -16,11 +16,10 @@ int BFS_seq(int x, const vector<Node> &nodes)
     {
         {
         // my_timer t;
-        utimer t ("frontier");
+        // utimer t ("frontier");
         cout << "f size " << frontier.size() << endl;
         for (int n_id : frontier)
         {
-            // this_thread::sleep_for (std::chrono::milliseconds(1));
             if (explored_nodes[n_id])
                 continue;
             explored_nodes[n_id] = true;
@@ -31,7 +30,6 @@ int BFS_seq(int x, const vector<Node> &nodes)
                 nodes[n_id].children.end()
             );
         }
-        // cout << "performance: " << double(frontier.size()) / t.get_time() << endl;
         }
         frontier = move(next_frontier);
         next_frontier.clear();
