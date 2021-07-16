@@ -39,7 +39,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         if (start == end) return;
         int my_counter = 0;
         {
-        // utimer t("frontier");
+        utimer t("frontier");
         for (int f_pos = start; f_pos < end; f_pos++)
         {
             int n_id = frontier[f_pos];
@@ -65,13 +65,15 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         cout << "f size " << frontier.size() << endl;
         vector<thread> workers;
 
+        {
+        utimer par_t1("parallel");
         my_timer t;   
         for (int tid = 0; tid < NumThreads; tid++)
             workers.push_back(thread(work_loop, tid));
 
         for (auto& t : workers) t.join();
         par_time += t.get_time();
-
+        }
 
         frontier.clear();
 

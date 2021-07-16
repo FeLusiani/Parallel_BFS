@@ -16,7 +16,7 @@ int BFS_seq(int x, const vector<Node> &nodes)
     {
         {
         // my_timer t;
-        // utimer t ("frontier");
+        utimer t ("frontier");
         cout << "f size " << frontier.size() << endl;
         for (int n_id : frontier)
         {
