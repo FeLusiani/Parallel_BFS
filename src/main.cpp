@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	occ = 0;
 	{
 		utimer t("BFS_par");
-		occ = BFS_par(to_find, graph.nodes_array, nw);
+		occ = BFS_par_th(to_find, graph.nodes_array, nw);
 	}
 	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 }
