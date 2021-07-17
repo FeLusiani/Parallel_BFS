@@ -4,7 +4,7 @@ using namespace std;
 #include <ff/ff.hpp>
 #include "build_graph.hpp"
 #include <Parallel_BFS/BFS_seq.hpp>
-#include <Parallel_BFS/BFS_par.hpp>
+#include <Parallel_BFS/BFS_par_th.hpp>
 #include "utimer.hpp"
 #include <chrono>
 #include <ctime>
