@@ -28,6 +28,8 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
 
     vector<int> frontier{0};
     vector<vector<int>> next_frontiers(NumThreads);
+    frontier.reserve(nodes.size() / 2);
+    for (auto& nf : next_frontiers) nf.reserve(nodes.size() / NumThreads);
 
     auto work_loop = [&](int tid)
     {
@@ -39,7 +41,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         if (start == end) return;
         int my_counter = 0;
         {
-        utimer t("frontier");
+        // utimer t("frontier");
         for (int f_pos = start; f_pos < end; f_pos++)
         {
             int n_id = frontier[f_pos];
