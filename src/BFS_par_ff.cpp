@@ -14,12 +14,13 @@ struct worker_result{
 
 int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
 {
+    const int n_nodes = nodes.size();
     ParallelForReduce<worker_result> pf(nw);
     int step = 1;
     int chunk = 0;
 
     ffTime(START_TIME);
-    vector<bool> explored_nodes(nodes.size(), false);
+    vector<bool> explored_nodes(n_nodes, false);
 
     vector<int> frontier{0};
     frontier.reserve(nodes.size() / 2);

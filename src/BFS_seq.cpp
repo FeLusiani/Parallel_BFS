@@ -2,6 +2,7 @@
 #include <set>
 #include <thread>
 #include <chrono>
+#include <numeric>
 #include "../src/utimer.hpp"
 
 int BFS_seq(int x, const vector<Node> &nodes)
@@ -20,10 +21,11 @@ int BFS_seq(int x, const vector<Node> &nodes)
         // my_timer t;
         utimer t ("frontier");
         cout << "f size " << frontier.size() << endl;
+        // cout << "explored " << accumulate(explored_nodes.begin(), explored_nodes.end(), 0) << endl;
+
         for (int n_id : frontier)
         {
-            if (explored_nodes[n_id])
-                continue;
+            if (explored_nodes[n_id]) continue;
             explored_nodes[n_id] = true;
             counter += nodes[n_id].value == x;
             next_frontier.insert(
