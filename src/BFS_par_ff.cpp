@@ -6,7 +6,53 @@ using namespace ff;
 
 #include "../src/utimer.hpp"
 
+int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
+{
+    const int n_nodes = nodes.size();
+    vector<unsigned char> explored_nodes(n_nodes, false);
 
+    vector<unsigned char> frontier(n_nodes, false);
+    frontier[0] = true;
+    vector<unsigned char> next_frontier(n_nodes, false);
+    bool children_added = true;
+
+    ParallelForReduce<long int> pf(nw);
+    int step = 1;
+    int chunk = 0;
+
+    ffTime(START_TIME);
+
+    auto mapF = [&](int n_id, long& my_counter)
+    {
+        if (!frontier[n_id] || explored_nodes[n_id]) return;
+        explored_nodes[n_id] = true;
+        my_counter += nodes[n_id].value == x;
+        for (int child : nodes[n_id].children){
+            children_added = true;
+            next_frontier[child] = true;
+        }
+    };
+
+    auto reduceF= [](long& red_counter, const long& partial_count){
+        red_counter += partial_count;
+    };
+
+    long counter = 0;
+    // long int seq_time = 0;
+    while (children_added)
+    {
+        children_added = false;
+        pf.parallel_reduce(counter, 0, 0, n_nodes, step, chunk, mapF, reduceF, nw);
+        ffTime(STOP_TIME);
+    }
+
+
+    // cout << "seq time is " << seq_time << endl;
+    cout << "par time is " << ffTime(GET_TIME) << endl;
+    return counter;
+}
+
+/*
 struct worker_result{
     int counter = 0;
     vector<int> next_frontier;
@@ -66,3 +112,4 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
     cout << "par time is " << ffTime(GET_TIME) << endl;
     return WR.counter;
 }
+*/

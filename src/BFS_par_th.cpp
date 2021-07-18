@@ -21,19 +21,19 @@ public:
     }
 };
 
+#define ARRAY
+
+#ifdef ARRAY
 
 int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
 {
     const int n_nodes = nodes.size();
     atomic<unsigned long> counter = {0};
     vector<unsigned char> explored_nodes(n_nodes, false);
-    // auto explored_nodes = new atomic<bool>[n_nodes];
-    // for (int i =0; i<n_nodes; i++) explored_nodes[i] = false;
 
     vector<unsigned char> frontier(n_nodes, false);
     frontier[0] = true;
     vector<unsigned char> next_frontier(n_nodes, false);
-    SpinLock nf_lock;
     bool children_added = true;
 
     auto workF = [&](int tid)
@@ -41,16 +41,13 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         int my_counter = 0;
         for (int n_id = tid; n_id < n_nodes; n_id += NumThreads)
         {
-            if (!frontier[n_id]) continue;
-            if (explored_nodes[n_id]) continue;
+            if (!frontier[n_id] || explored_nodes[n_id]) continue;
             explored_nodes[n_id] = true;
             my_counter += nodes[n_id].value == x;
-            // nf_lock.lock();
             for (int child : nodes[n_id].children){
                 children_added = true;
                 next_frontier[child] = true;
             }
-            // nf_lock.unlock();
         }
         // join results to global results
         counter += my_counter;
@@ -109,12 +106,13 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     cout << "seq time is " << seq_time << endl;
     cout << "par time is " << par_time << endl;
 
-    // delete explored_nodes;
     return counter;
 }
 
+#endif
 
-/*
+#ifdef ATOMIC_EXPLORED
+
 int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
 {
     const int n_nodes = nodes.size();
@@ -186,9 +184,11 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     delete explored_nodes;
     return counter;
 }
-*/
 
-/*
+#endif
+
+#ifdef SET
+
 int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
 {
     const int n_nodes = nodes.size();
@@ -265,4 +265,6 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     cout << "seq time is " << seq_time << endl;
     cout << "par time is " << par_time << endl;
     return counter;
-}*/
+}
+
+#endif
