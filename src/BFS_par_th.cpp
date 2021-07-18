@@ -23,7 +23,7 @@ public:
 int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
 {
 
-    atomic<int> counter = {0};
+    atomic<unsigned long> counter = {0};
     vector<bool> explored_nodes(nodes.size(), false);
 
     vector<int> frontier{0};
@@ -31,7 +31,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     frontier.reserve(nodes.size() / 2);
     for (auto& nf : next_frontiers) nf.reserve(nodes.size() / NumThreads);
 
-    auto work_loop = [&](int tid)
+    auto workF = [&](int tid)
     {
         int to_process = frontier.size() / NumThreads;
         int start = to_process * tid;
@@ -71,7 +71,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         utimer par_t1("parallel");
         my_timer t;   
         for (int tid = 0; tid < NumThreads; tid++)
-            workers.push_back(thread(work_loop, tid));
+            workers.push_back(thread(workF, tid));
 
         for (auto& t : workers) t.join();
         par_time += t.get_time();

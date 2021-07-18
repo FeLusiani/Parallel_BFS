@@ -6,10 +6,12 @@
 
 int BFS_seq(int x, const vector<Node> &nodes)
 {
-    int counter = 0;
+    unsigned long counter = 0;
 
     vector<int> frontier{0};
+    frontier.reserve(nodes.size() / 2);
     vector<int> next_frontier{};
+    next_frontier.reserve(nodes.size() / 2);
     vector<bool> explored_nodes(nodes.size(), false);
 
     while (!frontier.empty())

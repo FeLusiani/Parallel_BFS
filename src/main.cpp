@@ -1,10 +1,10 @@
 #include <iostream>
 using namespace std;
 
-#include <ff/ff.hpp>
 #include "build_graph.hpp"
 #include <Parallel_BFS/BFS_seq.hpp>
 #include <Parallel_BFS/BFS_par_th.hpp>
+#include <Parallel_BFS/BFS_par_ff.hpp>
 #include "utimer.hpp"
 #include <chrono>
 #include <ctime>
@@ -48,8 +48,15 @@ int main(int argc, char *argv[])
 
 	occ = 0;
 	{
-		utimer t("BFS_par");
+		utimer t("BFS_par_th");
 		occ = BFS_par_th(to_find, graph.nodes_array, nw);
+	}
+	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+
+	occ = 0;
+	{
+		utimer t("BFS_par_ff");
+		occ = BFS_par_ff(to_find, graph.nodes_array, nw);
 	}
 	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 }
