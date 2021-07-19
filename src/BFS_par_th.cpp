@@ -36,7 +36,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     vector<unsigned char> next_frontier(n_nodes, false);
     bool children_added = true;
 
-    auto workF = [&](int tid)
+    auto workF2 = [&](int tid)
     {
         int my_counter = 0;
         for (int n_id = tid; n_id < n_nodes; n_id += NumThreads)
@@ -45,15 +45,15 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
             explored_nodes[n_id] = true;
             my_counter += nodes[n_id].value == x;
             for (int child : nodes[n_id].children){
-                children_added = true;
                 next_frontier[child] = true;
+                if (!children_added) children_added = true;
             }
         }
         // join results to global results
         counter += my_counter;
     };
 
-    auto workF2 = [&](int tid)
+    auto workF = [&](int tid)
     {
         int to_process = n_nodes / NumThreads;
         int start = to_process * tid;
@@ -62,8 +62,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
         int my_counter = 0;
         for (int n_id = start; n_id < end; n_id++)
         {
-            if (!frontier[n_id]) continue;
-            if (explored_nodes[n_id]) continue;
+            if (!frontier[n_id] || explored_nodes[n_id]) continue;
             explored_nodes[n_id] = true;
             my_counter += nodes[n_id].value == x;
             for (int child : nodes[n_id].children){
@@ -152,29 +151,29 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     long int par_time = 0;
     while (!frontier.empty())
     {
-        cout << "f size " << frontier.size() << endl;
+        // cout << "f size " << frontier.size() << endl;
         vector<thread> workers;
 
         {
-        utimer par_t1("parallel");
-        my_timer t;   
+        // utimer par_t1("parallel");
+        // my_timer t;   
         for (int tid = 0; tid < NumThreads; tid++)
             workers.push_back(thread(workF, tid));
 
         for (auto& t : workers) t.join();
-        par_time += t.get_time();
+        // par_time += t.get_time();
         }
 
         frontier.clear();
 
         {
         // utimer t("merging");
-        my_timer t;
+        // my_timer t;
         for (auto& partial : next_frontiers){
             frontier.insert(frontier.end(), partial.begin(), partial.end());
             partial.clear();
         }
-        seq_time += t.get_time();
+        // seq_time += t.get_time();
         }
 
     }

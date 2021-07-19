@@ -6,6 +6,10 @@ using namespace ff;
 
 #include "../src/utimer.hpp"
 
+#define ARRAY
+
+#ifdef ARRAY
+
 int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
 {
     const int n_nodes = nodes.size();
@@ -56,7 +60,10 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
     return tot_counter;
 }
 
-/*
+#endif
+
+#ifdef ATOMIC_EXPLORED
+
 struct worker_result{
     int counter = 0;
     vector<int> next_frontier;
@@ -69,8 +76,8 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
     int step = 1;
     int chunk = 0;
 
-    ffTime(START_TIME);
-    vector<bool> explored_nodes(n_nodes, false);
+    auto explored_nodes = new atomic<bool>[n_nodes];
+    for (int i =0; i<n_nodes; i++) explored_nodes[i] = false;
 
     vector<int> frontier{0};
     frontier.reserve(nodes.size() / 2);
@@ -101,19 +108,21 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
         );
     };
 
-    // long int seq_time = 0;
     while (!frontier.empty())
     {
         pf.parallel_reduce(WR, worker_result{}, 0, frontier.size(), step, chunk, mapF, reduceF, nw);
-        ffTime(STOP_TIME);
 
         frontier = move(WR.next_frontier);
         WR.next_frontier.clear();
     }
 
 
-    // cout << "seq time is " << seq_time << endl;
-    cout << "par time is " << ffTime(GET_TIME) << endl;
+    delete explored_nodes;
     return WR.counter;
 }
-*/
+
+#endif
+
+#ifdef SET
+
+#endif
