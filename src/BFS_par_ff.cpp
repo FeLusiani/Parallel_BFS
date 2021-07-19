@@ -24,8 +24,6 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
     ParallelForReduce<long int> pf(nw);
     int step = 1;
 
-    ffTime(START_TIME);
-
     auto mapF = [&](int n_id, long& my_counter)
     {
         if (!frontier[n_id] || explored_nodes[n_id]) return;
@@ -50,13 +48,8 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
         pf.parallel_reduce(counter, 0, 0, n_nodes, step, chunk, mapF, reduceF, nw);
         swap(frontier, next_frontier);
         fill(next_frontier.begin(), next_frontier.end(), false);
-        ffTime(STOP_TIME);
         tot_counter += counter;
     }
-
-
-    // cout << "seq time is " << seq_time << endl;
-    cout << "par time is " << ffTime(GET_TIME) << endl;
     return tot_counter;
 }
 

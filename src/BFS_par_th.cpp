@@ -58,29 +58,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
 
             }
         }
-        // join results to global results
         counter += counters[tid*padding];
-    };
-
-    auto workF2 = [&](int tid)
-    {
-        int to_process = n_nodes / NumThreads;
-        int start = to_process * tid;
-        int end = tid < (NumThreads - 1) ? start + to_process : n_nodes;
-        
-        int my_counter = 0;
-        for (int n_id = start; n_id < end; n_id++)
-        {
-            if (!frontier[n_id] || explored_nodes[n_id]) continue;
-            explored_nodes[n_id] = true;
-            my_counter += nodes[n_id].value == x;
-            for (int child : nodes[n_id].children){
-                children_added = true;
-                next_frontier[child] = true;
-            }
-        }
-        // join results to global results
-        counter += my_counter;
     };
 
     long int seq_time = 0;
@@ -88,32 +66,15 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
     while (children_added)
     {
         children_added = false;
-        // cout << "f size " << accumulate(frontier.begin(), frontier.end(), 0) << endl;
-        // cout << "explored " << accumulate(explored_nodes.begin(), explored_nodes.end(), 0) << endl;
         vector<thread> workers;
-
-        {
-        utimer par_t1("parallel");
-        my_timer t;   
+ 
         for (int tid = 0; tid < NumThreads; tid++)
             workers.push_back(thread(workF, tid));
-
         for (auto& t : workers) t.join();
-        par_time += t.get_time();
-        }
 
-        {
-        // utimer t("merging");
-        my_timer t;
         swap(frontier, next_frontier);
         fill(next_frontier.begin(), next_frontier.end(), false);
-        seq_time += t.get_time();
-        }
     }
-
-    cout << "seq time is " << seq_time << endl;
-    cout << "par time is " << par_time << endl;
-
     return counter;
 }
 

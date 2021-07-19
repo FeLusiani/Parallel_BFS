@@ -17,12 +17,6 @@ int BFS_seq(int x, const vector<Node> &nodes)
 
     while (!frontier.empty())
     {
-        {
-        // my_timer t;
-        utimer t ("frontier");
-        cout << "f size " << frontier.size() << endl;
-        // cout << "explored " << accumulate(explored_nodes.begin(), explored_nodes.end(), 0) << endl;
-
         for (int n_id : frontier)
         {
             if (explored_nodes[n_id]) continue;
@@ -33,7 +27,6 @@ int BFS_seq(int x, const vector<Node> &nodes)
                 nodes[n_id].children.begin(),
                 nodes[n_id].children.end()
             );
-        }
         }
         frontier = move(next_frontier);
         next_frontier.clear();
