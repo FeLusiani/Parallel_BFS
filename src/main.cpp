@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 	int out_bound = stoi(args[2]);
 	int to_find = stoi(args[3]);
 	int nw = stoi(args[4]);
+	int chunk = stoi(args[5]);
 
 	int extra_connections = n_nodes;
 
@@ -49,14 +50,14 @@ int main(int argc, char *argv[])
 	occ = 0;
 	{
 		utimer t("BFS_par_th");
-		occ = BFS_par_th(to_find, graph.nodes_array, nw);
+		occ = BFS_par_th(to_find, graph.nodes_array, nw, chunk);
 	}
 	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 
 	occ = 0;
 	{
 		utimer t("BFS_par_ff");
-		occ = BFS_par_ff(to_find, graph.nodes_array, nw);
+		occ = BFS_par_ff(to_find, graph.nodes_array, nw, chunk);
 	}
 	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 }

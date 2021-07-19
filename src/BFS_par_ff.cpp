@@ -10,7 +10,7 @@ using namespace ff;
 
 #ifdef ARRAY
 
-int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
+int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
 {
     const int n_nodes = nodes.size();
     vector<unsigned char> explored_nodes(n_nodes, false);
@@ -22,7 +22,6 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
 
     ParallelForReduce<long int> pf(nw);
     int step = 1;
-    int chunk = 0;
 
     ffTime(START_TIME);
 

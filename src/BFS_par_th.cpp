@@ -25,7 +25,7 @@ public:
 
 #ifdef ARRAY
 
-int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
+int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
 {
     const int n_nodes = nodes.size();
     atomic<unsigned long> counter = {0};
@@ -35,25 +35,30 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     frontier[0] = true;
     vector<unsigned char> next_frontier(n_nodes, false);
     bool children_added = true;
+    const int padding = 8;
+    vector<int> counters(NumThreads*padding, 0);
+    if (chunk < 1) chunk = 32;
 
-    auto workF2 = [&](int tid)
+    auto workF = [&](int tid)
     {
-        int my_counter = 0;
-        for (int n_id = tid; n_id < n_nodes; n_id += NumThreads)
+        counters[tid*padding] = 0;
+        for (int n_id = tid*chunk; n_id < n_nodes; n_id += NumThreads*chunk)
         {
-            if (!frontier[n_id] || explored_nodes[n_id]) continue;
-            explored_nodes[n_id] = true;
-            my_counter += nodes[n_id].value == x;
-            for (int child : nodes[n_id].children){
+            for (int offset=0; offset < chunk; offset++){
+            if (!frontier[n_id+offset] || explored_nodes[n_id+offset]) continue;
+            explored_nodes[n_id+offset] = true;
+            counters[tid*padding] += nodes[n_id+offset].value == x;
+            for (int child : nodes[n_id+offset].children){
                 next_frontier[child] = true;
                 if (!children_added) children_added = true;
             }
+            }
         }
         // join results to global results
-        counter += my_counter;
+        counter += counters[tid*padding];
     };
 
-    auto workF = [&](int tid)
+    auto workF2 = [&](int tid)
     {
         int to_process = n_nodes / NumThreads;
         int start = to_process * tid;
