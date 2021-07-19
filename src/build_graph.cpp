@@ -39,13 +39,10 @@ bool Graph::full() { return first_free >= n_nodes; }
 
 int Graph::new_node()
 {
-	if (!full())
-	{
-		int node_id = first_free++;
-		nodes_array[node_id] = Node(node_id, max_val);
-		return node_id;
-	}
-	return -1;
+	if (full())  return -1;
+	int node_id = first_free++;
+	nodes_array[node_id] = Node(node_id, max_val);
+	return node_id;
 }
 
 void Graph::build()

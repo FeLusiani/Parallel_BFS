@@ -43,15 +43,15 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
     auto workF = [&](int tid)
     {
         counters[tid*padding] = 0;
-        for (int n_id = tid*chunk; n_id < n_nodes; n_id += NumThreads*chunk)
+        for (int pos = tid*chunk; pos < n_nodes; pos += NumThreads*chunk)
         {
-            int my_chunk = min(chunk, n_nodes-n_id);
+            int my_chunk = min(chunk, n_nodes-pos);
             for (int offset=0; offset < my_chunk; offset++){
-
-            if (!frontier[n_id+offset] || explored_nodes[n_id+offset]) continue;
-            explored_nodes[n_id+offset] = true;
-            counters[tid*padding] += nodes[n_id+offset].value == x;
-            for (int child : nodes[n_id+offset].children){
+            int n_id = pos+offset;
+            if (!frontier[n_id] || explored_nodes[n_id]) continue;
+            explored_nodes[n_id] = true;
+            counters[tid*padding] += nodes[n_id].value == x;
+            for (int child : nodes[n_id].children){
                 next_frontier[child] = true;
                 if (!children_added) children_added = true;
             }
