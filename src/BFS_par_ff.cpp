@@ -37,19 +37,23 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
         red_counter += partial_count;
     };
 
-    long counter = 0;
+    long tot_counter = 0;
     // long int seq_time = 0;
     while (children_added)
     {
+        long counter = 0;
         children_added = false;
         pf.parallel_reduce(counter, 0, 0, n_nodes, step, chunk, mapF, reduceF, nw);
+        swap(frontier, next_frontier);
+        fill(next_frontier.begin(), next_frontier.end(), false);
         ffTime(STOP_TIME);
+        tot_counter += counter;
     }
 
 
     // cout << "seq time is " << seq_time << endl;
     cout << "par time is " << ffTime(GET_TIME) << endl;
-    return counter;
+    return tot_counter;
 }
 
 /*
