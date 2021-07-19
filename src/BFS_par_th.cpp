@@ -21,6 +21,7 @@ public:
     }
 };
 
+// ATOMIC_EXPLORED
 #define ARRAY
 
 #ifdef ARRAY
@@ -44,7 +45,9 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
         counters[tid*padding] = 0;
         for (int n_id = tid*chunk; n_id < n_nodes; n_id += NumThreads*chunk)
         {
-            for (int offset=0; offset < chunk; offset++){
+            int my_chunk = min(chunk, n_nodes-n_id);
+            for (int offset=0; offset < my_chunk; offset++){
+
             if (!frontier[n_id+offset] || explored_nodes[n_id+offset]) continue;
             explored_nodes[n_id+offset] = true;
             counters[tid*padding] += nodes[n_id+offset].value == x;
@@ -52,6 +55,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
                 next_frontier[child] = true;
                 if (!children_added) children_added = true;
             }
+
             }
         }
         // join results to global results
@@ -117,7 +121,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
 
 #ifdef ATOMIC_EXPLORED
 
-int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
+int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
 {
     const int n_nodes = nodes.size();
     atomic<unsigned long> counter = {0};
@@ -129,27 +133,33 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads)
     frontier.reserve(nodes.size() / 2);
     for (auto& nf : next_frontiers) nf.reserve(nodes.size() / NumThreads);
 
+    const int padding = 8;
+    vector<int> counters(NumThreads*padding, 0);
+
+    if (chunk < 1) chunk = 32;
+
     auto workF = [&](int tid)
     {
-        int my_counter = 0;
+        counters[tid*padding] = 0;
+        for (int f_pos = tid*chunk; f_pos < frontier.size(); f_pos += NumThreads*chunk)
         {
-        // utimer t("frontier");
-        for (int f_pos = tid; f_pos < frontier.size(); f_pos+=NumThreads)
-        {
-            int n_id = frontier[f_pos];
-            if (explored_nodes[n_id])
-                continue;
+            int my_chunk = min(chunk, int(frontier.size()-f_pos));
+            for (int offset=0; offset < my_chunk; offset++){
+
+            int n_id = frontier[f_pos+offset];
+            if (explored_nodes[n_id]) continue;
             explored_nodes[n_id] = true;
-            my_counter += nodes[n_id].value == x;
+            counters[tid*padding] += nodes[n_id].value == x;
             next_frontiers[tid].insert(
                 next_frontiers[tid].end(),
                 nodes[n_id].children.begin(),
                 nodes[n_id].children.end()
             );
-        }
+
+            }
         }
         // join results to global results
-        counter += my_counter;
+        counter += counters[tid*padding];
     };
 
     long int seq_time = 0;

@@ -7,6 +7,10 @@
 #include <set>
 #include <algorithm>
 
+#include <sstream>
+#include <utility>
+#include <iterator>
+
 #include <iterator> // needed for std::ostram_iterator
 
 Node::Node(int id, int max_val) : id{id}
@@ -14,10 +18,12 @@ Node::Node(int id, int max_val) : id{id}
 	value = rand() % (max_val+1);
 };
 
+Node::Node() : id{-1}, value{-1} {};
+
 ostream &operator<<(ostream &out, const Node &node)
 {
-	out << "<" << node.id << "," << node.value << ">";
-	out << node.children;
+	out << node.id << ' ' << node.value << '\t';
+	for (int child : node.children) out << child << ' ';
 	return out;
 }
 
@@ -39,15 +45,12 @@ int Graph::new_node()
 		nodes_array[node_id] = Node(node_id, max_val);
 		return node_id;
 	}
-	else
-	{
-		return -1;
-	}
+	return -1;
 }
 
 void Graph::build()
 {
-	nodes_array = vector<Node>(n_nodes, Node(-1, max_val));
+	nodes_array = vector<Node>(n_nodes, Node());
 
 	set<int> parent_nodes{new_node()};
 	set<int> children_nodes{};
@@ -113,16 +116,52 @@ void Graph::add_connections(int n)
 	}
 }
 
-void build(string filepath)
-{
-	int S_LEN;
-	cin >> S_LEN;
-	string old_string = to_string(45);
-	string new_string = string(S_LEN - old_string.length(), '0') + old_string;
-	cout << new_string << '\n';
+ostream& operator<<(ostream& out, const Graph& graph){
+	out << "Graph" << endl << graph.nodes_array.size() << endl;
+	for (auto& node : graph.nodes_array){
+		out << node << endl;
+	}
+	return out; 
+}
 
-	ofstream myfile;
-	myfile.open(filepath);
-	myfile << "Writing this to a file.\n";
-	myfile.close();
+
+istream& operator>>(istream& in, Graph& graph)
+{
+	graph.n_nodes = 0;
+	graph.nodes_array.clear();
+
+	string tmp;
+    in >> tmp;
+	if (tmp != string("Graph")){
+		cerr << "Error reading Graph object from stream " << endl;
+		return in;
+	}
+
+	int N;
+	in >> N;
+
+	graph.n_nodes = N;
+	graph.nodes_array = vector<Node>(N, Node());
+
+	int n_id_in, n_value;
+	for (int n_id = 0; n_id < N; n_id ++){
+		in >> n_id_in;
+		if (n_id_in != n_id){
+			cerr << "Error reading Graph object from stream " << endl;
+			return in;
+		}
+		in >> n_value;
+		graph.nodes_array[n_id] = Node();
+		graph.nodes_array[n_id].id = n_id;
+		graph.nodes_array[n_id].value = n_value;
+		int child;
+		
+		string line;
+		getline(in, line);
+		istringstream this_line(line);
+		istream_iterator<int> begin(this_line), end;
+		vector<int> children(begin, end);
+		graph.nodes_array[n_id].children = children;
+	}
+    return in;
 }

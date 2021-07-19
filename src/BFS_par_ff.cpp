@@ -6,6 +6,7 @@ using namespace ff;
 
 #include "../src/utimer.hpp"
 
+// ATOMIC_EXPLORED
 #define ARRAY
 
 #ifdef ARRAY
@@ -68,12 +69,11 @@ struct worker_result{
     vector<int> next_frontier;
 };
 
-int BFS_par_ff(int x, const vector<Node> &nodes, int nw)
+int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
 {
     const int n_nodes = nodes.size();
     ParallelForReduce<worker_result> pf(nw);
     int step = 1;
-    int chunk = 0;
 
     auto explored_nodes = new atomic<bool>[n_nodes];
     for (int i =0; i<n_nodes; i++) explored_nodes[i] = false;

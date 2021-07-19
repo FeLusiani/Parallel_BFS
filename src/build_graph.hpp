@@ -19,6 +19,9 @@ ostream &operator<<(ostream &out, const vector<T> &v)
         std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
         out << "\b\b]";
     }
+    else{
+        out << "[]";
+    }
     return out;
 }
 
@@ -27,6 +30,7 @@ struct Node
     int id;
     int value;
     vector<int> children;
+    Node();
     Node(int id, int max_val);
 };
 
@@ -49,6 +53,10 @@ public:
     int new_node();
     void build();
     void add_connections(int n);
+    friend ostream& operator<<(ostream& out, const Graph& graph);
+    friend istream& operator>>(istream& in, Graph& graph);
 };
+
+
 
 #endif
