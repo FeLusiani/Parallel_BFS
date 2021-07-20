@@ -68,6 +68,13 @@ int main(int argc, char *argv[])
 
 	occ = 0;
 	{
+		utimer t("BFS_par_th2");
+		occ = BFS_par_th2(to_find, graph.nodes_array, nw, chunk);
+	}
+	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+
+	occ = 0;
+	{
 		utimer t("BFS_par_ff");
 		occ = BFS_par_ff(to_find, graph.nodes_array, nw, chunk);
 	}
