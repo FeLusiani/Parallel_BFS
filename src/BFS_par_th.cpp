@@ -43,22 +43,6 @@ class Barrier
       function<void()> comp_f;
 };
 
-
-class SpinLock
-{
-    std::atomic_flag locked = {false};
-
-public:
-    void lock()
-    {
-        while (locked.test_and_set(std::memory_order_acquire));
-    }
-    void unlock()
-    {
-        locked.clear(std::memory_order_release);
-    }
-};
-
 int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
 {
     const int n_nodes = nodes.size();
