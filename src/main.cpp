@@ -62,61 +62,8 @@ int main(int argc, char *argv[])
 	const int repeat = 5;
 	cout << "Running each BFS for " << repeat << " times.\n\n";
 
-	occ = 0;
-	{
-		my_timer t;
-		for (int i = 0; i < repeat; i++)
-			occ = BFS_par_th(to_find, graph.nodes_array, nw, chunk);
-		cout << "Mean time for BFS_par_th: ";
-		cout << round(t.get_time()/double(repeat)) << endl;
-	}
-	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
-
-	occ = 0;
-	{
-		my_timer t;
-		for (int i = 0; i < repeat; i++)
-			occ = BFS_par_th2(to_find, graph.nodes_array, nw, chunk);
-		cout << "Mean time for BFS_par_th2: ";
-		cout << round(t.get_time()/double(repeat)) << endl;
-	}
-	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
-
-	occ = 0;
-	{
-		my_timer t;
-		for (int i = 0; i < repeat; i++)
-			occ = BFS_par_ff(to_find, graph.nodes_array, nw, chunk);
-		cout << "Mean time for BFS_par_ff: ";
-		cout << round(t.get_time()/double(repeat)) << endl;
-	}
-	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
-
-	occ = 0;
-	{
-		my_timer t;
-		for (int i = 0; i < repeat; i++)
-			occ = BFS_par_ff2(to_find, graph.nodes_array, nw, chunk);
-		cout << "Mean time for BFS_par_ff2: ";
-		cout << round(t.get_time()/double(repeat)) << endl;
-	}
-	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
-
-	occ = 0;
-	{
-		my_timer t;
-		for (int i = 0; i < repeat; i++)
-			occ = BFS_seq(to_find, graph.nodes_array);
-		cout << "Mean time for BFS_seq: ";
-		cout << round(t.get_time()/double(repeat)) << endl;
-	}
-	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
-}
-
-
-/*
-	auto run_search = [](auto search_f, string name){
-		occ = 0;
+	auto run_search = [&](auto search_f, string name){
+		int occ = 0;
 		{
 			my_timer t;
 			for (int i = 0; i < repeat; i++)
@@ -126,4 +73,29 @@ int main(int argc, char *argv[])
 		}
 		cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 	};
-*/
+
+	run_search(
+		[&](){return BFS_par_th(to_find, graph.nodes_array, nw, chunk);},
+		string("BFS_par_th")
+	);
+
+	run_search(
+		[&](){return BFS_par_th2(to_find, graph.nodes_array, nw, chunk);},
+		string("BFS_par_th2")
+	);
+
+	run_search(
+		[&](){return BFS_par_ff(to_find, graph.nodes_array, nw, chunk);},
+		string("BFS_par_ff")
+	);
+
+	run_search(
+		[&](){return BFS_par_ff2(to_find, graph.nodes_array, nw, chunk);},
+		string("BFS_par_ff2")
+	);
+
+	run_search(
+		[&](){return BFS_seq(to_find, graph.nodes_array);},
+		string("BFS_seq")
+	);
+}
