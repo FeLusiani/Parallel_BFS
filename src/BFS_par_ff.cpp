@@ -6,11 +6,6 @@ using namespace ff;
 
 #include "../src/utimer.hpp"
 
-// ATOMIC_EXPLORED
-#define ARRAY
-
-#ifdef ARRAY
-
 int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
 {
     const int n_nodes = nodes.size();
@@ -53,16 +48,13 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
     return tot_counter;
 }
 
-#endif
-
-#ifdef ATOMIC_EXPLORED
 
 struct worker_result{
     int counter = 0;
     vector<int> next_frontier;
 };
 
-int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
+int BFS_par_ff2(int x, const vector<Node> &nodes, int nw, int chunk)
 {
     const int n_nodes = nodes.size();
     ParallelForReduce<worker_result> pf(nw);
@@ -73,7 +65,6 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
 
     vector<int> frontier{0};
     frontier.reserve(nodes.size() / 2);
-    // vector<int> next_frontier{};
     worker_result WR;
     WR.next_frontier.reserve(nodes.size() / 2);
 
@@ -112,9 +103,3 @@ int BFS_par_ff(int x, const vector<Node> &nodes, int nw, int chunk)
     delete explored_nodes;
     return WR.counter;
 }
-
-#endif
-
-#ifdef SET
-
-#endif

@@ -9,6 +9,7 @@ using namespace std;
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <math.h>
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +19,7 @@ int main(int argc, char *argv[])
 
 	if (args[1] == string("build_graph")){
 		if (argc != 5){
-			cout << " - Usage: build_graph [n_nodes] [out_bound] [filepath]\n";
+			cout << " - Usage: build_graph n_nodes out_bound filepath\n";
 			return 0;
 		}
 		int n_nodes = stoi(args[2]);
@@ -40,7 +41,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (argc != 4){
-		cout << " - Usage: [filepath] [nw] [chunk]\n";
+		cout << " - Usage: filepath nw chunk\n";
 		return 0;
 	}
 	int to_find = 0;
@@ -58,32 +59,71 @@ int main(int argc, char *argv[])
 		counter += n.value == to_find;
 
 	int occ;
+	const int repeat = 5;
+	cout << "Running each BFS for " << repeat << " times.\n\n";
 
 	occ = 0;
 	{
-		utimer t("BFS_par_th");
-		occ = BFS_par_th(to_find, graph.nodes_array, nw, chunk);
+		my_timer t;
+		for (int i = 0; i < repeat; i++)
+			occ = BFS_par_th(to_find, graph.nodes_array, nw, chunk);
+		cout << "Mean time for BFS_par_th: ";
+		cout << round(t.get_time()/double(repeat)) << endl;
 	}
 	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 
 	occ = 0;
 	{
-		utimer t("BFS_par_th2");
-		occ = BFS_par_th2(to_find, graph.nodes_array, nw, chunk);
+		my_timer t;
+		for (int i = 0; i < repeat; i++)
+			occ = BFS_par_th2(to_find, graph.nodes_array, nw, chunk);
+		cout << "Mean time for BFS_par_th2: ";
+		cout << round(t.get_time()/double(repeat)) << endl;
 	}
-	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 
 	occ = 0;
 	{
-		utimer t("BFS_par_ff");
-		occ = BFS_par_ff(to_find, graph.nodes_array, nw, chunk);
+		my_timer t;
+		for (int i = 0; i < repeat; i++)
+			occ = BFS_par_ff(to_find, graph.nodes_array, nw, chunk);
+		cout << "Mean time for BFS_par_ff: ";
+		cout << round(t.get_time()/double(repeat)) << endl;
 	}
-	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 
 	occ = 0;
 	{
-		utimer t("BFS_seq");
-		occ = BFS_seq(to_find, graph.nodes_array);
+		my_timer t;
+		for (int i = 0; i < repeat; i++)
+			occ = BFS_par_ff2(to_find, graph.nodes_array, nw, chunk);
+		cout << "Mean time for BFS_par_ff2: ";
+		cout << round(t.get_time()/double(repeat)) << endl;
 	}
-	cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+
+	occ = 0;
+	{
+		my_timer t;
+		for (int i = 0; i < repeat; i++)
+			occ = BFS_seq(to_find, graph.nodes_array);
+		cout << "Mean time for BFS_seq: ";
+		cout << round(t.get_time()/double(repeat)) << endl;
+	}
+	cout << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 }
+
+
+/*
+	auto run_search = [](auto search_f, string name){
+		occ = 0;
+		{
+			my_timer t;
+			for (int i = 0; i < repeat; i++)
+				occ = search_f();
+			cout << "Mean time for " << name << " = ";
+			cout << round(t.get_time()/double(repeat)) << endl;
+		}
+		cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
+	};
+*/
