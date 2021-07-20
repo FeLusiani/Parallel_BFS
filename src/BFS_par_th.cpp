@@ -4,6 +4,43 @@
 #include <set>
 #include "../src/utimer.hpp"
 #include <numeric>
+#include<mutex>
+#include<condition_variable>
+
+template <typename F>
+class my_barrier
+{
+ public:
+    my_barrier(int count, F& on_completion)
+     : thread_count(count)
+     , counter(0)
+     , waiting(0)
+     , comp_f(on_completion)
+    {}
+
+    void wait()
+    {
+        std::unique_lock<std::mutex> lk(m);
+        ++counter;
+        ++waiting;
+        cv.wait(lk, [&]{return counter >= thread_count;});
+        if (waiting == thread_count)
+            comp_f();
+        --waiting;
+        cv.notify_one();
+        if(waiting == 0)
+           counter = 0;
+        lk.unlock();
+    }
+
+ private:
+      mutex m;
+      condition_variable cv;
+      int counter;
+      int waiting;
+      int thread_count;
+      F& comp_f;
+};
 
 
 class SpinLock
@@ -36,6 +73,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
     frontier[0] = true;
     vector<unsigned char> next_frontier(n_nodes, false);
     bool children_added = true;
+    bool work = true;
     const int padding = 8;
     vector<int> counters(NumThreads*padding, 0);
     if (chunk < 1) chunk = 32;
@@ -61,20 +99,30 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
         counter += counters[tid*padding];
     };
 
-    long int seq_time = 0;
-    long int par_time = 0;
-    while (children_added)
-    {
+    auto on_completion = [&]() noexcept {
+        if (!children_added){
+            work = false;
+            return;
+        }
         children_added = false;
-        vector<thread> workers;
- 
-        for (int tid = 0; tid < NumThreads; tid++)
-            workers.push_back(thread(workF, tid));
-        for (auto& t : workers) t.join();
-
         swap(frontier, next_frontier);
         fill(next_frontier.begin(), next_frontier.end(), false);
-    }
+    };
+
+    my_barrier barrier(NumThreads, on_completion);
+
+    auto work_wrapper = [&](int tid){
+        while (work){
+            workF(tid);
+            barrier.wait();
+        }
+    };
+
+    vector<thread> workers;
+    for (int tid = 0; tid < NumThreads; tid++)
+        workers.push_back(thread(work_wrapper, tid));
+
+    for (auto& t : workers) t.join();
     return counter;
 }
 
@@ -119,43 +167,38 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
 
             }
         }
-        // join results to global results
         counter += counters[tid*padding];
     };
 
-    long int seq_time = 0;
-    long int par_time = 0;
-    while (!frontier.empty())
-    {
-        // cout << "f size " << frontier.size() << endl;
-        vector<thread> workers;
-
-        {
-        // utimer par_t1("parallel");
-        // my_timer t;   
-        for (int tid = 0; tid < NumThreads; tid++)
-            workers.push_back(thread(workF, tid));
-
-        for (auto& t : workers) t.join();
-        // par_time += t.get_time();
-        }
-
+    bool work = true;
+    auto on_completion = [&]() noexcept {
         frontier.clear();
-
-        {
-        // utimer t("merging");
-        // my_timer t;
+        
         for (auto& partial : next_frontiers){
             frontier.insert(frontier.end(), partial.begin(), partial.end());
             partial.clear();
         }
-        // seq_time += t.get_time();
+
+        if (frontier.empty()){
+            work = false;
+            return;
         }
+    };
 
-    }
+    my_barrier barrier(NumThreads, on_completion);
 
-    cout << "seq time is " << seq_time << endl;
-    cout << "par time is " << par_time << endl;
+    auto work_wrapper = [&](int tid){
+        while (work){
+            workF(tid);
+            barrier.wait();
+        }
+    };
+
+    vector<thread> workers;
+    for (int tid = 0; tid < NumThreads; tid++)
+        workers.push_back(thread(work_wrapper, tid));
+    for (auto& t : workers) t.join();
+
     delete explored_nodes;
     return counter;
 }
