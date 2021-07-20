@@ -8,3 +8,5 @@ libs/*
 .vscode
 
 env
+
+results*.txt
