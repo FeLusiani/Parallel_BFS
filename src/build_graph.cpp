@@ -144,7 +144,8 @@ istream& operator>>(istream& in, Graph& graph)
 	for (int n_id = 0; n_id < N; n_id ++){
 		in >> n_id_in;
 		if (n_id_in != n_id){
-			cerr << "Error reading Graph object from stream " << endl;
+			cerr << "Error reading Graph object from stream: ";
+			cerr << "got n_id " << n_id_in << " at pos " << n_id << endl;
 			return in;
 		}
 		in >> n_value;
