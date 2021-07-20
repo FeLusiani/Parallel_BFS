@@ -56,6 +56,8 @@ void run_tests(const Graph& graph, int to_find, int nw, int chunk){
 		[&](){return BFS_seq(to_find, graph.nodes_array);},
 		string("BFS_seq")
 	);
+
+	cout << "\n\n";
 }
 
 int main(int argc, char *argv[])
