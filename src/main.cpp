@@ -23,11 +23,13 @@ void run_tests(const Graph& graph, int to_find, int nw, int chunk){
 	auto run_search = [&](auto search_f, string name){
 		int occ = 0;
 		{
-			my_timer t;
-			for (int i = 0; i < repeat; i++)
+			cout << "Exec times for " << name << " = ";
+			for (int i = 0; i < repeat; i++){
+				my_timer t;
 				occ = search_f();
-			cout << "Mean time for " << name << " = ";
-			cout << round(t.get_time()/double(repeat)) << endl;
+				cout << round(t.get_time()/double(repeat)) << ' ';
+			}
+			cout << endl;
 		}
 		cerr << "N. of " << to_find << ": " << occ << "- true is " << counter << "\n\n";
 	};

@@ -1,0 +1,163 @@
+make: Nothing to be done for `all'.
+
+
+Running each BFS for 5 times.
+N. workers = 1
+
+Mean time for BFS_par_th = 944257
+Mean time for BFS_par_th2 = 854792
+Mean time for BFS_par_ff = 913151
+Mean time for BFS_par_ff2 = 806093
+Mean time for BFS_seq = 290887
+
+
+Running each BFS for 5 times.
+N. workers = 2
+
+Mean time for BFS_par_th = 607414
+Mean time for BFS_par_th2 = 1.23322e+06
+Mean time for BFS_par_ff = 913450
+Mean time for BFS_par_ff2 = 576259
+Mean time for BFS_seq = 295916
+
+
+Running each BFS for 5 times.
+N. workers = 3
+
+Mean time for BFS_par_th = 460386
+Mean time for BFS_par_th2 = 846917
+Mean time for BFS_par_ff = 788617
+Mean time for BFS_par_ff2 = 476846
+Mean time for BFS_seq = 294778
+
+
+Running each BFS for 5 times.
+N. workers = 4
+
+Mean time for BFS_par_th = 335974
+Mean time for BFS_par_th2 = 701762
+Mean time for BFS_par_ff = 692845
+Mean time for BFS_par_ff2 = 448658
+Mean time for BFS_seq = 310178
+
+
+Running each BFS for 5 times.
+N. workers = 5
+
+Mean time for BFS_par_th = 357023
+Mean time for BFS_par_th2 = 633823
+Mean time for BFS_par_ff = 605227
+Mean time for BFS_par_ff2 = 405019
+Mean time for BFS_seq = 295163
+
+
+Running each BFS for 5 times.
+N. workers = 6
+
+Mean time for BFS_par_th = 305649
+Mean time for BFS_par_th2 = 573786
+Mean time for BFS_par_ff = 565189
+Mean time for BFS_par_ff2 = 371038
+Mean time for BFS_seq = 293786
+
+
+Running each BFS for 5 times.
+N. workers = 7
+
+Mean time for BFS_par_th = 217038
+Mean time for BFS_par_th2 = 537803
+Mean time for BFS_par_ff = 518177
+Mean time for BFS_par_ff2 = 345969
+Mean time for BFS_seq = 292888
+
+
+Running each BFS for 5 times.
+N. workers = 8
+
+Mean time for BFS_par_th = 182392
+Mean time for BFS_par_th2 = 508114
+Mean time for BFS_par_ff = 500845
+Mean time for BFS_par_ff2 = 329718
+Mean time for BFS_seq = 292322
+
+
+Running each BFS for 5 times.
+N. workers = 9
+
+Mean time for BFS_par_th = 172425
+Mean time for BFS_par_th2 = 460881
+Mean time for BFS_par_ff = 470579
+Mean time for BFS_par_ff2 = 344116
+Mean time for BFS_seq = 292041
+
+
+Running each BFS for 5 times.
+N. workers = 10
+
+Mean time for BFS_par_th = 155951
+Mean time for BFS_par_th2 = 428060
+Mean time for BFS_par_ff = 466308
+Mean time for BFS_par_ff2 = 313560
+Mean time for BFS_seq = 292264
+
+
+Running each BFS for 5 times.
+N. workers = 11
+
+Mean time for BFS_par_th = 152818
+Mean time for BFS_par_th2 = 477121
+Mean time for BFS_par_ff = 455468
+Mean time for BFS_par_ff2 = 310536
+Mean time for BFS_seq = 293152
+
+
+Running each BFS for 5 times.
+N. workers = 12
+
+Mean time for BFS_par_th = 146198
+Mean time for BFS_par_th2 = 416834
+Mean time for BFS_par_ff = 454936
+Mean time for BFS_par_ff2 = 298856
+Mean time for BFS_seq = 293499
+
+
+Running each BFS for 5 times.
+N. workers = 13
+
+Mean time for BFS_par_th = 137944
+Mean time for BFS_par_th2 = 410238
+Mean time for BFS_par_ff = 472567
+Mean time for BFS_par_ff2 = 302395
+Mean time for BFS_seq = 293579
+
+
+Running each BFS for 5 times.
+N. workers = 14
+
+Mean time for BFS_par_th = 140641
+Mean time for BFS_par_th2 = 396870
+Mean time for BFS_par_ff = 437071
+Mean time for BFS_par_ff2 = 286836
+Mean time for BFS_seq = 292754
+
+
+Running each BFS for 5 times.
+N. workers = 15
+
+Mean time for BFS_par_th = 138977
+Mean time for BFS_par_th2 = 408719
+Mean time for BFS_par_ff = 442225
+Mean time for BFS_par_ff2 = 296671
+Mean time for BFS_seq = 293134
+
+
+Running each BFS for 5 times.
+N. workers = 16
+
+Mean time for BFS_par_th = 128421
+Mean time for BFS_par_th2 = 394871
+Mean time for BFS_par_ff = 412100
+Mean time for BFS_par_ff2 = 286875
+Mean time for BFS_seq = 294041
+
+
