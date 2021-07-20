@@ -6,12 +6,13 @@
 #include <numeric>
 #include<mutex>
 #include<condition_variable>
+#include <functional>
 
-template <typename F>
-class my_barrier
+
+class Barrier
 {
  public:
-    my_barrier(int count, F& on_completion)
+    Barrier(int count, const function<void()>& on_completion)
      : thread_count(count)
      , counter(0)
      , waiting(0)
@@ -39,7 +40,7 @@ class my_barrier
       int counter;
       int waiting;
       int thread_count;
-      F& comp_f;
+      function<void()> comp_f;
 };
 
 
@@ -59,7 +60,7 @@ public:
 };
 
 // ATOMIC_EXPLORED
-#define ARRAY
+#define ATOMIC_EXPLORED
 
 #ifdef ARRAY
 
@@ -73,7 +74,6 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
     frontier[0] = true;
     vector<unsigned char> next_frontier(n_nodes, false);
     bool children_added = true;
-    bool work = true;
     const int padding = 8;
     vector<int> counters(NumThreads*padding, 0);
     if (chunk < 1) chunk = 32;
@@ -99,6 +99,8 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
         counter += counters[tid*padding];
     };
 
+
+    bool work = true;
     auto on_completion = [&]() noexcept {
         if (!children_added){
             work = false;
@@ -109,7 +111,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
         fill(next_frontier.begin(), next_frontier.end(), false);
     };
 
-    my_barrier barrier(NumThreads, on_completion);
+    Barrier barrier(NumThreads, on_completion);
 
     auto work_wrapper = [&](int tid){
         while (work){
@@ -185,7 +187,7 @@ int BFS_par_th(int x, const vector<Node> &nodes, int NumThreads, int chunk)
         }
     };
 
-    my_barrier barrier(NumThreads, on_completion);
+    Barrier barrier(NumThreads, on_completion);
 
     auto work_wrapper = [&](int tid){
         while (work){
