@@ -134,8 +134,7 @@ int BFS_par_th2(int x, const vector<Node> &nodes, int NumThreads, int chunk)
             for (int offset=0; offset < my_chunk; offset++){
 
             int n_id = frontier[f_pos+offset];
-            if (explored_nodes[n_id]) continue;
-            explored_nodes[n_id] = true;
+            if (explored_nodes[n_id].exchange(true)) continue;
             counters[tid*padding] += nodes[n_id].value == x;
             next_frontiers[tid].insert(
                 next_frontiers[tid].end(),

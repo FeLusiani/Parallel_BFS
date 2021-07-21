@@ -71,9 +71,7 @@ int BFS_par_ff2(int x, const vector<Node> &nodes, int nw, int chunk)
     auto mapF = [&](int i, worker_result& my_wr)
     {
         int n_id = frontier[i];
-        if (explored_nodes[n_id])
-            return;
-        explored_nodes[n_id] = true;
+        if (explored_nodes[n_id].exchange(true)) return;
         my_wr.counter += nodes[n_id].value == x;
         my_wr.next_frontier.insert(
             my_wr.next_frontier.end(),
