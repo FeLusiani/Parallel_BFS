@@ -91,37 +91,15 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	if (args[1] == string("build_graph")){
-		if (argc != 5){
-			cout << " - Usage: build_graph n_nodes out_bound filepath\n";
-			return 0;
-		}
-		int n_nodes = stoi(args[2]);
-		int out_bound = stoi(args[3]);
-
-		srand(time(NULL));
-		Graph graph(n_nodes, out_bound, 10);
-		utimer t("building graph");
-		graph.build();
-		int extra_connections = n_nodes;
-		graph.add_connections(n_nodes);
-
-		ofstream myfile_out;
-		myfile_out.open(args[4]);
-		myfile_out << graph;
-		myfile_out << endl;
-		myfile_out.close();
-		return 0;
-	}
-
-	if (argc != 4 && argc != 5){
-		cout << " - Usage: filepath nw chunk [up_to_nw]\n";
+	if (argc != 4 && argc != 6){
+		cout << " - Usage: filepath nw chunk [up_to_nw step]\n";
 		return 0;
 	}
 	int to_find = 0;
 	int nw = stoi(args[2]);
 	int chunk = stoi(args[3]);
-	int up_to_nw = argc == 4 ? nw : stoi(args[4]);   
+	int up_to_nw = argc == 4 ? nw : stoi(args[4]);
+	int nw_step = argc == 4 ? 1 : stoi(args[5]); 
 
 	Graph graph(-1,-1,-1);
 	ifstream myfile_in;
@@ -129,6 +107,6 @@ int main(int argc, char *argv[])
 	myfile_in >> graph;
 	myfile_in.close();
 
-	for (int i = nw; i <= up_to_nw; i ++)
+	for (int i = nw; i <= up_to_nw; i+=nw_step)
 		run_tests(graph, to_find, i, chunk);
 }
