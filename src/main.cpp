@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
 	if (args[1] == string("build_graph")){
 		if (argc != 5){
-			cout << " - Usage: build_graph n_nodes out_bound filepath\n";
+			cout << " - Usage: build_graph N_NODES OUT_BOUND FILEPATH\n";
 			return 0;
 		}
 		int n_nodes = stoi(args[2]);
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (argc != 4 && argc != 6){
-		cout << " - Usage: filepath nw chunk [up_to_nw step]\n";
+		cout << " - Usage: FILEPATH NW CHUNK [UP_TO_NW STEP]\n";
 		return 0;
 	}
 	int to_find = 0;
